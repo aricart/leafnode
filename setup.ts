@@ -51,7 +51,7 @@ async function maybeMkAccount(
   let key: KeyPair;
   if (sd === "") {
     key = createAccount();
-    await Deno.writeTextFile(seedPath, new TextDecoder().decode(key.getSeed()));
+    await Deno.writeFile(seedPath, key.getSeed());
   } else {
     key = fromSeed(new TextEncoder().encode(sd));
   }

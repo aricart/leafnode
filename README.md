@@ -1,9 +1,8 @@
 # Sample of Service
 
-Here's an automated flow of creating an account and assigning
-an import. To create the environment, you'll need to first
-apply the following patch to the ngsapi-js library I shared with
-you earlier.
+Here's an automated flow of creating an account and assigning an import. To
+create the environment, you'll need to first apply the following patch to the
+ngsapi-js library I shared with you earlier.
 
 Apply this patch to the assets I shared with you earlier:
 
@@ -56,9 +55,8 @@ deno run -A --unstable client.ts
 
 ## Running via a leaf-node
 
-To run with a leaf-node, you'll have to upgrade your account
-to a developer program, to do this let's grab the generated
-assets:
+To run with a leaf-node, you'll have to upgrade your account to a developer
+program, to do this let's grab the generated assets:
 
 ```bash
 # verify where nsc is storing stuff - note where the `Stores Dir lives`
@@ -85,8 +83,8 @@ export NKEYS_PATH=/tmp/merged/keys
 ngs edit -d /tmp/merged/operators/synadia
 ```
 
-After you registered to the free developer plan, you should be able
-to connect a leaf node.
+After you registered to the free developer plan, you should be able to connect a
+leaf node.
 
 Edit ./nats.conf to have an absolute path for the creds path you generated
 
@@ -103,40 +101,46 @@ leafnodes {
 ```
 
 Then:
+
 ```bash
 nats-server -c nats.conf
 ```
 
-If you look at `service_via_leafnode.ts` it connects to the local host, but
-the server is connected to ngs:
+If you look at `service_via_leafnode.ts` it connects to the local host, but the
+server is connected to ngs:
 
 ```bash
 deno run -A --unstable service_via_leafnode.ts
 ```
 
 Run the client again
+
 ```bash
 deno run -A --unstable client.ts
 ```
 
-
 ## What does all this mean
 
-The point illustrated here is that the service side of things can connect directly to NGS or through a leaf node.
+The point illustrated here is that the service side of things can connect
+directly to NGS or through a leaf node.
 
-A leaf node simply bridges authentication domains, connections to the leafnode from the internal network used no credentials (you can add them if you want), they simply subscribed locally, and data to and from the `service` account bridged transparently to the `client` account.
+A leaf node simply bridges authentication domains, connections to the leafnode
+from the internal network used no credentials (you can add them if you want),
+they simply subscribed locally, and data to and from the `service` account
+bridged transparently to the `client` account.
 
-In terms of configuration, the actual complexity is on vending the service out, and generating the import tokens.
+In terms of configuration, the actual complexity is on vending the service out,
+and generating the import tokens.
 
-The service simply exports `q.*` - the wildcard is a placeholder for an account and provides the isolation to other service importers.
+The service simply exports `q.*` - the wildcard is a placeholder for an account
+and provides the isolation to other service importers.
 
+The service import is generated per client account. It sets the subject by which
+the client can access the service to `q.<account_id>`. It then aliases it to
+`q`. The client simply makes requests to `q`, but the request is actually
+`q.<account_id>`. You can print the subject of inbound messages to see it flow
+through. Other clients won't be able to publish on a subject clamped to a
+different account.
 
-The service import is generated per client account.
-It sets the subject by which the client can access the service to `q.<account_id>`. It then aliases it to `q`. The client simply makes requests to `q`, but the request is actually `q.<account_id>`. You can print the subject of inbound messages to see it flow through. Other clients won't be able to publish on a subject clamped to a different account.
-
-The ability to clamp each client account to its own subject also gives you a handle to identify the account making the request on the service side.
-
-
-
-
-
+The ability to clamp each client account to its own subject also gives you a
+handle to identify the account making the request on the service side.

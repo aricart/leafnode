@@ -1,13 +1,12 @@
 import {
   connect,
   credsAuthenticator,
-  JSONCodec,
 } from "https://deno.land/x/nats/src/mod.ts";
 
-const cd = await Deno.readTextFile("./service/user.creds");
+const cd = await Deno.readFile("./service/user.creds");
 const nc = await connect({
   servers: ["connect.ngs.global:4222"],
-  authenticator: credsAuthenticator(new TextEncoder().encode(cd)),
+  authenticator: credsAuthenticator(cd),
   debug: true,
 });
 
