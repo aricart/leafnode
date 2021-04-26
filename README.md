@@ -120,6 +120,21 @@ deno run -A --unstable client.ts
 ```
 
 
+## What does all this mean
+
+The point illustrated here is that the service side of things can connect directly to NGS or through a leaf node.
+
+A leaf node simply bridges authentication domains, connections to the leafnode from the internal network used no credentials (you can add them if you want), they simply subscribed locally, and data to and from the `service` account bridged transparently to the `client` account.
+
+In terms of configuration, the actual complexity is on vending the service out, and generating the import tokens.
+
+The service simply exports `q.*` - the wildcard is a placeholder for an account and provides the isolation to other service importers.
+
+
+The service import is generated per client account.
+It sets the subject by which the client can access the service to `q.<account_id>`. It then aliases it to `q`. The client simply makes requests to `q`, but the request is actually `q.<account_id>`. You can print the subject of inbound messages to see it flow through. Other clients won't be able to publish on a subject clamped to a different account.
+
+The ability to clamp each client account to its own subject also gives you a handle to identify the account making the request on the service side.
 
 
 
