@@ -6,7 +6,7 @@ import {
 
 const cd = await Deno.readTextFile("./service/user.creds");
 const nc = await connect({
-  servers: ["connect.ngs.synadia-test.com:4222"],
+  servers: ["connect.ngs.global:4222"],
   authenticator: credsAuthenticator(new TextEncoder().encode(cd)),
   debug: true,
 });
